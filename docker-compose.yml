@@ -1,0 +1,40 @@
+---
+version: "3.7"
+services:
+  spark:
+    container_name: spark
+    build: spark
+    ports:
+      - "10000:10000"
+      - "4040:4040"
+    user: '0'
+    command:
+      - |
+        /opt/spark/bin/spark-shell \
+        --class org.apache.spark.sql.hive.thriftserver.HiveThriftServer2 \
+        --name "Thrift JDBC/ODBC Server"
+    entrypoint: ["bash", "-c"]
+    depends_on:
+      - minio
+  minio:
+    container_name: minio
+    build: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - ./data:/data
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=admin1234
+  metastore:
+    container_name: metastore
+    image: postgres:14
+    ports:
+      - "25432:5432"
+    volumes:
+      - ./metastore:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=metastore
+      - POSTGRES_PASSWORD=metastore
+      - POSTGRES_DB=metastore
