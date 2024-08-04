@@ -1,13 +1,29 @@
 ---
-version: "3.7"
 services:
+  hive:
+    container_name: hive
+    image: apache/hive:4.0.0
+    ports:
+      - "9083:9083"
+    environment:
+      - SERVICE_NAME=metastore
+    depends_on:
+      - minio
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
   spark:
     container_name: spark
     build: spark
     ports:
       - "10000:10000"
+      - "7077:7077"
       - "4040:4040"
-    user: '0'
+    user: "0"
     command:
       - |
         /opt/spark/bin/spark-shell \
@@ -16,25 +32,84 @@ services:
     entrypoint: ["bash", "-c"]
     depends_on:
       - minio
+      - hive
+
   minio:
     container_name: minio
     build: minio
     ports:
       - "9000:9000"
       - "9001:9001"
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      retries: 5
+      start_period: 5s
     volumes:
       - ./data:/data
     environment:
       - MINIO_ROOT_USER=admin
       - MINIO_ROOT_PASSWORD=admin1234
-  metastore:
-    container_name: metastore
-    image: postgres:14
-    ports:
-      - "25432:5432"
-    volumes:
-      - ./metastore:/var/lib/postgresql/data
+
+  mysql:
+    container_name: mysql
+    image: mysql
+    restart: always
     environment:
-      - POSTGRES_USER=metastore
-      - POSTGRES_PASSWORD=metastore
-      - POSTGRES_DB=metastore
+      MYSQL_ROOT_PASSWORD: airflow
+      MYSQL_USER: airflow
+      MYSQL_PASSWORD: airflow
+      MYSQL_DATABASE: airflow
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "$$MYSQL_USER",
+          "--password=$$MYSQL_PASSWORD",
+        ]
+      start_period: 5s
+      interval: 10s
+      retries: 5
+
+  airflow:
+    container_name: airflow
+    build: airflow
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+    command: standalone
+    depends_on:
+      minio:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: false
+      AIRFLOW__DATABASE__LOAD_DEFAULT_CONNECTIONS: false
+      AIRFLOW__CORE__TEST_CONNECTION: Enabled
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: "mysql+mysqldb://airflow:airflow@mysql/airflow"
+      AIRFLOW__API__AUTH_BACKENDS: "airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session"
+      AIRFLOW__COSMOS__DBT_DOCS_DIR: "s3://warehouse"
+      AIRFLOW__COSMOS__DBT_DOCS_CONN_ID: "s3_conn_id"
+      AIRFLOW__WEBSERVER__SHOW_TRIGGER_FORM_IF_NO_PARAMS: true
+      AIRFLOW__LOGGING__REMOTE_LOGGING: true
+      AIRFLOW__LOGGING__REMOTE_BASE_LOG_FOLDER: "s3://airflow"
+      AIRFLOW__LOGGING__REMOTE_LOG_CONN_ID: "s3_conn_id"
+      _AIRFLOW_DB_MIGRATE: true
+      _AIRFLOW_WWW_USER_CREATE: true
+      _AIRFLOW_WWW_USER_USERNAME: airflow
+      _AIRFLOW_WWW_USER_PASSWORD: airflow
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s

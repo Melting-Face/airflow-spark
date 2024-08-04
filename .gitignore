@@ -1,2 +1,4 @@
 data/
 metastore/
+logs/
+**/__pycache__/**
