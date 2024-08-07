@@ -1,4 +1,5 @@
 data/
 metastore/
 logs/
-**/__pycache__/**
+mysql/
+**/__pycache__/

@@ -16,23 +16,24 @@ services:
       retries: 5
       start_period: 30s
 
-  # spark:
-  #   container_name: spark
-  #   build: spark
-  #   ports:
-  #     - "10000:10000"
-  #     - "7077:7077"
-  #     - "4040:4040"
-  #   user: "0"
-  #   command:
-  #     - |
-  #       /opt/spark/bin/spark-shell \
-  #       --class org.apache.spark.sql.hive.thriftserver.HiveThriftServer2 \
-  #       --name "Thrift JDBC/ODBC Server"
-  #   entrypoint: ["bash", "-c"]
-  #   depends_on:
-  #     - minio
-  #     - hive
+  spark:
+    container_name: spark
+    build: spark
+    ports:
+      - "10000:10000"
+      - "7077:7077"
+      - "4040:4040"
+    user: "0"
+    command:
+      - |
+        /opt/spark/sbin/start-master.sh &&
+        /opt/spark/sbin/start-worker.sh spark://localhost:7077 &&
+        /opt/spark/bin/spark-shell \
+        --class org.apache.spark.sql.hive.thriftserver.HiveThriftServer2
+    entrypoint: ["bash", "-c"]
+    depends_on:
+      - minio
+      - hive
 
   minio:
     container_name: minio
@@ -60,6 +61,8 @@ services:
       MYSQL_USER: airflow
       MYSQL_PASSWORD: airflow
       MYSQL_DATABASE: airflow
+    volumes:
+      - ./mysql:/var/lib/mysql
     healthcheck:
       test:
         [
