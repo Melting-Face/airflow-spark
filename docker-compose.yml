@@ -16,23 +16,23 @@ services:
       retries: 5
       start_period: 30s
 
-  spark:
-    container_name: spark
-    build: spark
-    ports:
-      - "10000:10000"
-      - "7077:7077"
-      - "4040:4040"
-    user: "0"
-    command:
-      - |
-        /opt/spark/bin/spark-shell \
-        --class org.apache.spark.sql.hive.thriftserver.HiveThriftServer2 \
-        --name "Thrift JDBC/ODBC Server"
-    entrypoint: ["bash", "-c"]
-    depends_on:
-      - minio
-      - hive
+  # spark:
+  #   container_name: spark
+  #   build: spark
+  #   ports:
+  #     - "10000:10000"
+  #     - "7077:7077"
+  #     - "4040:4040"
+  #   user: "0"
+  #   command:
+  #     - |
+  #       /opt/spark/bin/spark-shell \
+  #       --class org.apache.spark.sql.hive.thriftserver.HiveThriftServer2 \
+  #       --name "Thrift JDBC/ODBC Server"
+  #   entrypoint: ["bash", "-c"]
+  #   depends_on:
+  #     - minio
+  #     - hive
 
   minio:
     container_name: minio
