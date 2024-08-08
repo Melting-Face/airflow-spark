@@ -2,7 +2,7 @@
 
 apt-get upgrade && apt-get update -y
 
-apt-get install wget -y
+apt-get install wget build-essential default-jdk -y
 
 mkdir jars
 

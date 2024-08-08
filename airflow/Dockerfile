@@ -10,6 +10,6 @@ RUN sh ./setup.sh
 
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-arm64
 
-USER airflow
+RUN pip3 install --no-cache-dir -r requirements.txt
 
-RUN pip install --no-cache-dir -r requirements.txt
+USER airflow
