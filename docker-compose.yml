@@ -9,31 +9,30 @@ services:
       - SERVICE_NAME=metastore
     depends_on:
       - minio
-    healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 30s
 
-  spark:
-    container_name: spark
-    build: spark
-    ports:
-      - "10000:10000"
-      - "7077:7077"
-      - "4040:4040"
-    user: "0"
-    command:
-      - |
-        /opt/spark/sbin/start-master.sh &&
-        /opt/spark/sbin/start-worker.sh spark://localhost:7077 &&
-        /opt/spark/bin/spark-shell \
-        --class org.apache.spark.sql.hive.thriftserver.HiveThriftServer2
-    entrypoint: ["bash", "-c"]
-    depends_on:
-      - minio
-      - hive
+  # spark:
+  #   container_name: spark
+  #   build: spark
+  #   ports:
+  #     - "10000:10000"
+  #     - "7077:7077"
+  #     - "28080:8080"
+  #     - "28081:8081"
+  #     - "4040:4040"
+  #   user: "0"
+  #   command:
+  #     - |
+  #       /opt/spark/sbin/start-master.sh && \
+  #       /opt/spark/sbin/start-worker.sh spark://127.0.0.1:7077 && \
+  #       /opt/spark/sbin/start-thriftserver.sh \
+  #         --master spark://127.0.0.1:7077 \
+  #         --executor-memory 2G \
+  #         --total-executor-cores 2 && \
+  #       tail -f /dev/null
+  #   entrypoint: ["bash", "-c"]
+  #   depends_on:
+  #     - minio
+  #     - hive
 
   minio:
     container_name: minio
@@ -96,8 +95,10 @@ services:
       AIRFLOW__DATABASE__LOAD_DEFAULT_CONNECTIONS: false
       AIRFLOW__CORE__TEST_CONNECTION: Enabled
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: "mysql+mysqldb://airflow:airflow@mysql/airflow"
-      AIRFLOW__API__AUTH_BACKENDS: "airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session"
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN:
+        "mysql+mysqldb://airflow:airflow@mysql/airflow"
+      AIRFLOW__API__AUTH_BACKENDS:
+        "airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session"
       AIRFLOW__COSMOS__DBT_DOCS_DIR: "s3://warehouse"
       AIRFLOW__COSMOS__DBT_DOCS_CONN_ID: "s3_conn_id"
       AIRFLOW__WEBSERVER__SHOW_TRIGGER_FORM_IF_NO_PARAMS: true

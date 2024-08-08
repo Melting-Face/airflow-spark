@@ -6,8 +6,7 @@ COPY . .
 
 USER 0
 
-RUN apt-get update -y && \
-    apt install openjdk-17-jre-headless -y
+RUN sh ./setup.sh
 
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-arm64
 
