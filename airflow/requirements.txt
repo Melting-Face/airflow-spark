@@ -1,4 +1,4 @@
 apache-airflow==2.9.3
-pyspark==3.2.4
+pyspark==3.4.1
 apache-airflow-providers-apache-spark==4.8.1
 apache-airflow-providers-jdbc==4.4.0

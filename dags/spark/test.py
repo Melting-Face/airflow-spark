@@ -1,3 +1,4 @@
+from pyspark.sql import DataFrame as D
 from pyspark.sql import SparkSession
 
 spark = (
@@ -9,7 +10,7 @@ spark = (
     .getOrCreate()
 )
 
-df = spark.createDataFrame(
+df: D = spark.createDataFrame(
     [
         (1, "John Doe", 21),
         (2, "Jane Doe", 22),
@@ -17,4 +18,4 @@ df = spark.createDataFrame(
     ],
     ["id", "name", "age"],
 )
-df.show()
+df.write.parquet("s3a://warehouse/table")
