@@ -10,29 +10,24 @@ services:
     depends_on:
       - minio
 
-  # spark:
-  #   container_name: spark
-  #   build: spark
-  #   ports:
-  #     - "10000:10000"
-  #     - "7077:7077"
-  #     - "28080:8080"
-  #     - "28081:8081"
-  #     - "4040:4040"
-  #   user: "0"
-  #   command:
-  #     - |
-  #       /opt/spark/sbin/start-master.sh && \
-  #       /opt/spark/sbin/start-worker.sh spark://127.0.0.1:7077 && \
-  #       /opt/spark/sbin/start-thriftserver.sh \
-  #         --master spark://127.0.0.1:7077 \
-  #         --executor-memory 2G \
-  #         --total-executor-cores 2 && \
-  #       tail -f /dev/null
-  #   entrypoint: ["bash", "-c"]
-  #   depends_on:
-  #     - minio
-  #     - hive
+  spark:
+    container_name: spark
+    build: spark
+    ports:
+      - "10000:10000"
+      - "7077:7077"
+      - "28080:8080"
+      - "4040:4040"
+    user: "0"
+    command:
+      - |
+        /opt/spark/sbin/start-master.sh && \
+        /opt/spark/sbin/start-worker.sh spark://spark:7077 && \
+        /opt/spark/sbin/start-thriftserver.sh \
+          --executor-memory 2G \
+          --total-executor-cores 2 && \
+        tail -f /dev/null
+    entrypoint: ["bash", "-c"]
 
   minio:
     container_name: minio

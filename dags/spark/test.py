@@ -18,4 +18,10 @@ df: D = spark.createDataFrame(
     ],
     ["id", "name", "age"],
 )
-df.write.parquet("s3a://warehouse/table")
+
+result = (
+    df.write.mode("overwrite")
+    .option("path", "s3a://warehouse/abcde")
+    .format("parquet")
+    .saveAsTable("abcde")
+)

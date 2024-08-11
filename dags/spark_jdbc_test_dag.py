@@ -14,12 +14,12 @@ from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOpe
     catchup=False,
 )
 def spark_submit_dag():
-    # spark_submit = SparkSubmitOperator(
-    #     task_id="spark_submit",
-    #     conn_id="spark_conn_id",
-    #     conf=spark_confs,
-    #     application=f"{AIRFLOW_HOME}/dags/spark/test.py",
-    # )
+    spark_submit = SparkSubmitOperator(
+        task_id="spark_submit",
+        conn_id="spark_conn_id",
+        conf=spark_confs,
+        application=f"{AIRFLOW_HOME}/dags/spark/test.py",
+    )
 
     jdbc_to_spark = SparkJDBCOperator(
         task_id="jdbc_to_spark",
@@ -28,13 +28,14 @@ def spark_submit_dag():
         cmd_type="jdbc_to_spark",
         jdbc_conn_id="mysql_jdbc_conn_id",
         jdbc_driver="com.mysql.cj.jdbc.Driver",
-        jdbc_table="(select * from kidsnote.emoticons_emoticon) as tables",
-        metastore_table="emoticons_emoticon",
+        jdbc_table="dag",
+        metastore_table="dag",
         save_format="parquet",
         save_mode="overwrite",
     )
 
     jdbc_to_spark
 
+    spark_submit
 
 spark_submit_dag()
