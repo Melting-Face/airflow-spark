@@ -21,10 +21,11 @@ spark_confs = {
     "spark.hadoop.fs.s3a.connection.ssl.enabled": False,
     "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem",
     "spark.driver.userClassPathFirst": True,
-    "spark.sql.hive.metastore.warehouse.dir": "s3a://warehouse",
+    "spark.sql.warehouse.dir": "s3a://warehouse",
     "spark.sql.parquet.int96TimestampConversion": "true",
     "spark.sql.parquet.mergeSchema": "true",
     "spark.sql.parquet.compression.codec": "gzip",
+    "spark.sql.session.timeZone": "Asia/Seoul",
     "spark.sql.extensions": "io.delta.sql.DeltaSparkSessionExtension",
     "spark.sql.catalog.spark_catalog": "org.apache.spark.sql.delta.catalog.DeltaCatalog",
 }

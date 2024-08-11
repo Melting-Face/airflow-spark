@@ -23,9 +23,6 @@ services:
       - |
         /opt/spark/sbin/start-master.sh && \
         /opt/spark/sbin/start-worker.sh spark://spark:7077 && \
-        /opt/spark/sbin/start-thriftserver.sh \
-          --executor-memory 2G \
-          --total-executor-cores 2 && \
         tail -f /dev/null
     entrypoint: ["bash", "-c"]
 

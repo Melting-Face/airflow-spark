@@ -4,9 +4,6 @@ from pyspark.sql import SparkSession
 spark = (
     SparkSession.builder.appName("SparkExample")
     .enableHiveSupport()
-    .config("hive.default.fileformat", "parquet")
-    .config("spark.sql.session.timeZone", "Asia/Seoul")
-    .config("spark.speculation", "true")
     .getOrCreate()
 )
 
