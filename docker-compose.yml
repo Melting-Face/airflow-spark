@@ -1,14 +1,14 @@
 ---
 services:
-  hive:
-    container_name: hive
-    image: apache/hive:4.0.0
-    ports:
-      - "9083:9083"
-    environment:
-      - SERVICE_NAME=metastore
-    depends_on:
-      - minio
+  # hive:
+  #   container_name: hive
+  #   image: apache/hive:4.0.0
+  #   ports:
+  #     - "9083:9083"
+  #   environment:
+  #     - SERVICE_NAME=metastore
+  #   depends_on:
+  #     - minio
 
   spark:
     container_name: spark
