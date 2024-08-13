@@ -20,5 +20,5 @@ result = (
     df.write.mode("overwrite")
     .option("path", "s3a://warehouse/abcde")
     .format("parquet")
-    .saveAsTable("abcde")
+    .saveAsTable("default.abcde")
 )
