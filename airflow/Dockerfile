@@ -8,7 +8,7 @@ USER 0
 
 RUN sh ./setup.sh
 
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-arm64
+ENV JAVA_HOME=/usr/lib/jvm/msopenjdk-11-arm64
 
 USER airflow
 
