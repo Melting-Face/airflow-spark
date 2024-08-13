@@ -13,7 +13,7 @@ spark_confs = {
     # "spark.hadoop.datanucleus.schema.autoCreateTables": True,
     # # DataNucleus가 사용하는 데이터 스토어(데이터베이스 구조)가 고정되지 않음
     # "spark.hadoop.datanucleus.fixedDatastore": False,
-    "spark.sql.hive.metastore.schema.verification": False, 
+    "spark.sql.hive.metastore.schema.verification": False,
 
     "spark.hadoop.fs.s3a.access.key": "admin",
     "spark.hadoop.fs.s3a.secret.key": "admin1234",
@@ -22,7 +22,7 @@ spark_confs = {
     "spark.hadoop.fs.s3a.connection.ssl.enabled": False,
     "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem",
     "spark.driver.userClassPathFirst": True,
-    "spark.sql.warehouse.dir": "s3a://warehouse",
+    "spark.sql.warehouse.dir": "s3a://warehouse/dir",
     "spark.sql.parquet.int96TimestampConversion": "true",
     "spark.sql.parquet.mergeSchema": "true",
     "spark.sql.parquet.compression.codec": "gzip",
